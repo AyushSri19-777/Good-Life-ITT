@@ -1,0 +1,91 @@
+<script>
+
+var TotalTransactionLine = new Chartist.Line('#total-transaction-line-chart', {
+//   labels: [
+//       <% efforts.forEach(row => { %>
+//           <%= row.Date %> ,
+//       <% }); %>
+
+//     ],
+  series: [
+    [
+    <% efforts.forEach(row => { %>
+          <%= row.hours %>,
+      <% }); %>
+    ],
+
+  ]
+}, 	{
+		chartPadding: 0,
+		axisX: {
+			showLabel: true,
+			showGrid: false
+		},
+		axisY: {
+			showLabel: true,
+			showGrid: true,
+			low: 0,
+			high: 17,
+			scaleMinSpace: 15
+		},
+		lineSmooth: Chartist.Interpolation.simple({
+			divisor: 2
+		}),
+		plugins: [Chartist.plugins.tooltip({ class: "total-transaction-tooltip", appendToBody: true })],
+		fullWidth: true
+    }
+    
+);
+
+TotalTransactionLine.on("created", function (data) {
+        var defs = data.svg.querySelector("defs") || data.svg.elem("defs");
+        defs
+            .elem("linearGradient", {
+                id: "lineLinearStats",
+                x1: 0,
+                y1: 0,
+                x2: 1,
+                y2: 0
+            })
+            .elem("stop", {
+                offset: "0%",
+                "stop-color": "rgba(255, 82, 249, 0.1)"
+            })
+            .parent()
+            .elem("stop", {
+                offset: "10%",
+                "stop-color": "rgba(255, 82, 249, 1)"
+            })
+            .parent()
+            .elem("stop", {
+                offset: "30%",
+                "stop-color": "rgba(255, 82, 249, 1)"
+            })
+            .parent()
+            .elem("stop", {
+                offset: "95%",
+                "stop-color": "rgba(133, 3, 168, 1)"
+            })
+            .parent()
+            .elem("stop", {
+                offset: "100%",
+                "stop-color": "rgba(133, 3, 168, 0.1)"
+            });
+
+        return defs;
+
+    }).on("draw", function (data) {
+        var circleRadius = 5;
+        if (data.type === "point") {
+            var circle = new Chartist.Svg("circle", {
+                cx: data.x,
+                cy: data.y,
+                "ct:value": data.value.y,
+                r: circleRadius,
+                class: data.value.y === 35 ? "ct-point ct-point-circle" : "ct-point ct-point-circle-transperent"
+            });
+            data.element.replace(circle);
+        }
+    });
+
+</script>
